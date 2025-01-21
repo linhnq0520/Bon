@@ -48,5 +48,56 @@ namespace Bon.Core.Extensions
                 return null;
             }
         }
+
+        public static string ToSerialize(this object obj)
+        {
+            if (obj == null)
+                return null;
+
+            return JsonSerializer.Serialize(obj);
+        }
+
+        public static T ToObject<T>(this object obj)
+            where T : class
+        {
+            if (obj == null)
+                return null;
+
+            if (obj is string jsonString)
+            {
+                return JsonSerializer.Deserialize<T>(jsonString);
+            }
+
+            string json = obj.ToSerialize();
+            return JsonSerializer.Deserialize<T>(json);
+        }
+
+        public static bool TryParse<T>(this object obj, out T result)
+            where T : class
+        {
+            result = null;
+
+            if (obj == null)
+                return false;
+
+            try
+            {
+                if (obj is string jsonString)
+                {
+                    result = JsonSerializer.Deserialize<T>(jsonString);
+                }
+                else
+                {
+                    string json = obj.ToSerialize();
+                    result = JsonSerializer.Deserialize<T>(json);
+                }
+
+                return result != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
