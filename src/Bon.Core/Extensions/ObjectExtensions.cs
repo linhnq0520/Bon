@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
+using Bon.Core.Json;
 
 namespace Bon.Core.Extensions
 {
@@ -98,6 +99,19 @@ namespace Bon.Core.Extensions
             {
                 return false;
             }
+        }
+
+        public static string ToSerializeSnakeCase(this object obj)
+        {
+            if (obj == null)
+                return string.Empty;
+
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
+            };
+
+            return JsonSerializer.Serialize(obj, options);
         }
     }
 }
